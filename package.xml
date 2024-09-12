@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>av_dm_control</name>
+  <version>0.0.1</version>
+  <description> Development Mule Control for AV Project at NIST</description>
+  <maintainer email="sanchit.kedia@nist.gov">Sanchit Kedia</maintainer>
+  <license>NIST</license>
+
+  <depend>rclcpp</depend>
+
+  <buildtool_depend>ament_cmake_python</buildtool_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>
