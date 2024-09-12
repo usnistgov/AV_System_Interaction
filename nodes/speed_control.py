@@ -22,7 +22,7 @@ class SpeedOverrideNode(Node):
         self.speed_publisher = self.create_publisher(UlcCmd, '/speed_override', 10)
 
         self.timer = None
-        self.publish_duration = 5.0  # Duration in seconds for which to publish speed override messages
+        self.publish_duration = 8.0  # Duration in seconds for which to publish speed override messages
         self.remaining_time = 0.0
 
 
@@ -45,7 +45,7 @@ class SpeedOverrideNode(Node):
             
             msg.header.stamp = self.get_clock().now().to_msg()
             msg.cmd = 0.0  # Velcity command in m/s (0.0 for stop)
-            msg.limit_decel = 1.0 # Deceleration limit in m/s^2
+            msg.limit_decel = 1.5 # Deceleration limit in m/s^2
             msg.cmd_type = UlcCmd.CMD_VELOCITY
             msg.enable = True
 
