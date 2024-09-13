@@ -4,22 +4,29 @@ import rclpy
 from rclpy.node import Node
 from std_msgs.msg import String
 from ds_dbw_msgs.msg import UlcCmd
+from rclpy.callback_groups import MutuallyExclusiveCallbackGroup
+from rclpy.executors import MultiThreadedExecutor
 
 class SpeedOverrideNode(Node):
 
     def __init__(self):
         super().__init__('speed_override_node')
+
+        self.publisher_group = MutuallyExclusiveCallbackGroup()
+        self.subscriber_group = MutuallyExclusiveCallbackGroup()
         
         # Subscriber to stop command topic
         self.stop_subscriber = self.create_subscription(
             String,
             'stop_cmd',  # Topic name to subscribe to
             self.stop_callback,
-            10
+            10,
+            callback_group=self.subscriber_group
         )
 
         # Publisher to the speed_override topic
-        self.speed_publisher = self.create_publisher(UlcCmd, '/speed_override', 10)
+        self.speed_publisher = self.create_publisher(UlcCmd, '/speed_override', 10,
+                                                     callback_group=self.publisher_group)
 
         self.timer = None
         self.publish_duration = 8.0  # Duration in seconds for which to publish speed override messages
@@ -59,11 +66,19 @@ class SpeedOverrideNode(Node):
 
 
 def main(args=None):
-    rclpy.init(args=args)
+
+    rclpy.init(args=args) 
     node = SpeedOverrideNode()
-    rclpy.spin(node)
-    node.destroy_node()
-    rclpy.shutdown()
+    
+    executor = MultiThreadedExecutor()
+    executor.add_node(node)
+
+    try:
+        executor.spin()
+    finally:
+        executor.shutdown()
+        node.destroy_node()
+        rclpy.shutdown()
 
 
 if __name__ == '__main__':
